@@ -210,6 +210,11 @@ public class SwipeBackHelper extends Handler {
                         int color = getWindowBackgroundColor();
                         curView.setBackgroundColor(color);
                     }
+                    View previousView = mViewManager.mPreviousContentView;
+                    if(previousView != null && previousView.getBackground() == null){
+                        int color = getWindowBackgroundColor(mViewManager.mPreviousActivity);
+                        previousView.setBackgroundColor(color);
+                    }
                 }
                 break;
 
@@ -267,6 +272,18 @@ public class SwipeBackHelper extends Handler {
         try {
             array = mActivity.getTheme().obtainStyledAttributes(new int[]{android.R.attr.windowBackground});
             return array.getColor(0, ContextCompat.getColor(mActivity, android.R.color.transparent));
+        } finally {
+            if (array != null) {
+                array.recycle();
+            }
+        }
+    }
+
+    private int getWindowBackgroundColor(Activity activity) {
+        TypedArray array = null;
+        try {
+            array = activity.getTheme().obtainStyledAttributes(new int[]{android.R.attr.windowBackground});
+            return array.getColor(0, ContextCompat.getColor(activity, android.R.color.transparent));
         } finally {
             if (array != null) {
                 array.recycle();
@@ -369,7 +386,7 @@ public class SwipeBackHelper extends Handler {
 
 
     private final FrameLayout getContentView(Activity activity) {
-        return (FrameLayout) activity.findViewById(Window.ID_ANDROID_CONTENT);
+        return (FrameLayout) activity.getWindow().getDecorView();
     }
 
     class ViewManager {
@@ -431,7 +448,7 @@ public class SwipeBackHelper extends Handler {
             if(mPreviousActivity == null || mPreviousActivity.isFinishing()) return;
             Activity preActivity = mPreviousActivity;
             final ViewGroup previewContentView = getContentView(preActivity);
-            previewContentView.addView(view);
+            previewContentView.addView(view,0);
             mPreviousActivity = null;
         }
 
