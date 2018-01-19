@@ -482,9 +482,11 @@ public class SwipeBackHelper extends Handler {
         private void addCacheView() {
             final FrameLayout contentView = mCurrentContentView;
             final View previousView = mPreviousContentView;
-            PreviousPageView previousPageView = new PreviousPageView(mActivity);
-            contentView.addView(previousPageView, 0);
-            previousPageView.cacheView(previousView);
+            if(mActivity != null && !mActivity.isFinishing()){
+                PreviousPageView previousPageView = new PreviousPageView(mActivity);
+                contentView.addView(previousPageView, 0);
+                previousPageView.cacheView(previousView);
+            }
         }
 
         private View getDisplayView() {
